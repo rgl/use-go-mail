@@ -1,0 +1,28 @@
+# see https://github.com/compose-spec/compose-spec/blob/master/spec.md
+# see https://github.com/opencontainers/image-spec/blob/master/annotations.md
+services:
+  mailpit:
+    # see https://hub.docker.com/r/axllent/mailpit
+    # see https://github.com/axllent/mailpit
+    # see https://mailpit.axllent.org/docs/install/docker/
+    image: axllent/mailpit:v1.13.3
+    command:
+      - --smtp-auth-accept-any
+      - --smtp-auth-allow-insecure
+    ports:
+      # smtp.
+      # http://localhost:1025
+      - 1025:1025
+      # http.
+      # http://localhost:8025
+      - 8025:8025
+    restart: on-failure
+  use-go-mail:
+    build: .
+    environment:
+      - MAIL_SERVER_ADDR=smtp://mailpit:1025
+    ports:
+      # http.
+      # http://localhost:8000
+      - 8000:8000
+    restart: on-failure
